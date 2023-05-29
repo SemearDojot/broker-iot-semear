@@ -1,55 +1,46 @@
+import json
 import paho.mqtt.client as mqtt
 
-# Função chamada quando o cliente MQTT recebe uma conexão do broker
+broker_receive = "localhost"
+porta_receive = 1884
+usuario_receive = "dojot"
+senha_receive = "dojot"
+topico_receive = "semear"
+
+broker_publish = "localhost"
+porta_publish = 1883
+usuario_publish = "admin:338b93"
+senha_publish = "dojot"
+topico_publish = "admin:338b93/attrs'"
+
 def on_connect(client, userdata, flags, rc):
-    print("Conectado ao broker com código de resultado: " + str(rc))
-    # Inscreva-se no tópico desejado para receber os payloads
-    client.subscribe("semear")
+    print("Conectado ao servidor MQTT")
+    client.subscribe(topico_receive)
 
-# Função chamada quando uma mensagem MQTT é recebida do broker
 def on_message(client, userdata, msg):
-    # Faça o parsing do payload recebido
-    payload = msg.payload.decode("utf-8")
-    print("Payload recebido: " + payload)
+    print("Mensagem recebida no tópico: " + msg.topic)
+    print("Conteúdo: " + msg.payload.decode())
 
-    # Publique o payload em outro endpoint MQTT
-    publish_mqtt(payload)
+    # Parse do payload JSON recebido
+    payload = json.loads(msg.payload.decode())
+    # Fazer o parser e extrair informações
+    # ...
+    # resultado = ...
 
-# Função para publicar o payload em outro endpoint MQTT
-def publish_mqtt(payload):
-    # Configurações do endpoint MQTT
-    broker = "10.233.48.51"
-    porta = 1883
-    usuario = "dojot"
-    senha = "admin:338b93"
-    topico = "admin:338b93/attrs'"
+    # Conectar ao servidor MQTT de publicação
+    client_publish = mqtt.Client()
+    client_publish.username_pw_set(usuario_publish, senha_publish)
+    client_publish.connect(broker_publish, porta_publish)
 
-    # Criação do cliente MQTT
-    client = mqtt.Client()
-    client.username_pw_set(usuario, senha)
+    # Publicar o resultado via MQTT
+    client_publish.publish(topico_publish, json.dumps(resultado))
+    print("Resultado publicado com sucesso no tópico: " + topico_publish)
 
-    # Conexão ao broker MQTT
-    client.connect(broker, porta)
+client_receive = mqtt.Client()
+client_receive.username_pw_set(usuario_receive, senha_receive)
+client_receive.on_connect = on_connect
+client_receive.on_message = on_message
 
-    # Publicação do payload no outro endpoint MQTT
-    client.publish(topico, payload)
+client_receive.connect(broker_receive, porta_receive)
 
-    # Encerramento da conexão
-    client.disconnect()
-
-# Configuração do cliente MQTT
-client = mqtt.Client()
-
-# Associação de callbacks
-client.on_connect = on_connect
-client.on_message = on_message
-
-# Configurações do broker MQTT
-broker = "35.196.200.67"  # IP do broker MQTT
-porta = 1884
-
-# Conexão ao broker MQTT
-client.connect(broker, porta)
-
-# Loop para manter a conexão MQTT ativa
-client.loop_forever()
+client_receive.loop_forever()
