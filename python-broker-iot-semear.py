@@ -18,7 +18,7 @@ def on_message(client, userdata, msg):
 # Função para publicar o payload em outro endpoint MQTT
 def publish_mqtt(payload):
     # Configurações do endpoint MQTT
-    broker = "localhost"
+    broker = "10.233.48.51"
     porta = 1883
     usuario = "dojot"
     senha = "admin:338b93"
