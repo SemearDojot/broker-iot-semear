@@ -4,7 +4,7 @@ import paho.mqtt.client as mqtt
 def on_connect(client, userdata, flags, rc):
     print("Conectado ao broker com código de resultado: " + str(rc))
     # Inscreva-se no tópico desejado para receber os payloads
-    client.subscribe("seu/topico/aqui")
+    client.subscribe("semear")
 
 # Função chamada quando uma mensagem MQTT é recebida do broker
 def on_message(client, userdata, msg):
@@ -18,11 +18,11 @@ def on_message(client, userdata, msg):
 # Função para publicar o payload em outro endpoint MQTT
 def publish_mqtt(payload):
     # Configurações do endpoint MQTT
-    broker = "outro-endpoint-mqtt"
+    broker = "localhost"
     porta = 1883
-    usuario = "seu-usuario"
-    senha = "sua-senha"
-    topico = "seu/outro-topico"
+    usuario = "dojot"
+    senha = "admin:338b93"
+    topico = "admin:338b93/attrs'"
 
     # Criação do cliente MQTT
     client = mqtt.Client()
@@ -46,7 +46,7 @@ client.on_message = on_message
 
 # Configurações do broker MQTT
 broker = "35.196.200.67"  # IP do broker MQTT
-porta = 1883
+porta = 1884
 
 # Conexão ao broker MQTT
 client.connect(broker, porta)
