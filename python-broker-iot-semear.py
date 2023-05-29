@@ -41,6 +41,4 @@ client_receive.username_pw_set(usuario_receive, senha_receive)
 client_receive.on_connect = on_connect
 client_receive.on_message = on_message
 
-client_receive.connect(broker_receive, porta_receive)
-
 client_receive.loop_forever()
